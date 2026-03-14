@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,9 +23,14 @@ public class Transaction {
     private BigDecimal amount;
     private LocalDate transactionDate;
 
+    // NOVO CAMPO: Diz ao banco de dados para salvar como texto (INCOME ou EXPENSE)
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
+
     public Transaction() {
     }
 
+    // --- GETTERS E SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -35,4 +42,7 @@ public class Transaction {
 
     public LocalDate getTransactionDate() { return transactionDate; }
     public void setTransactionDate(LocalDate transactionDate) { this.transactionDate = transactionDate; }
+
+    public TransactionType getType() { return type; }
+    public void setType(TransactionType type) { this.type = type; }
 }

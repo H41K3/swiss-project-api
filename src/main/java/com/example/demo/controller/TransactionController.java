@@ -49,4 +49,10 @@ public class TransactionController {
     public Transaction updateTransaction(@PathVariable Long id, @Valid @RequestBody TransactionRequestDTO dto) {
         return service.updateTransaction(id, dto);
     }
+
+    // NOVA ROTA: Retorna o resumo financeiro
+    @GetMapping("/summary")
+    public com.example.demo.dto.BalanceResponseDTO getSummary() {
+        return service.getBalanceSummary();
+    }
 }
