@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,5 +41,22 @@ public class TransactionController {
     @DeleteMapping("/{id}")
     public void deleteTransaction(@PathVariable Long id) {
         repository.deleteById(id);
+    }
+    
+    // Endpoint para ATUALIZAR uma transação existente (PUT)
+    @PutMapping("/{id}")
+    public Transaction updateTransaction(@PathVariable Long id, @RequestBody Transaction transactionDetails) {
+        
+        // 1. Busca a transação antiga no banco de dados
+        Transaction existingTransaction = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transação não encontrada com o ID: " + id));
+
+        // 2. Atualiza os dados com as informações novas
+        existingTransaction.setDescription(transactionDetails.getDescription());
+        existingTransaction.setAmount(transactionDetails.getAmount());
+        existingTransaction.setTransactionDate(transactionDetails.getTransactionDate());
+
+        // 3. Salva de volta no MySQL e retorna o resultado
+        return repository.save(existingTransaction);
     }
 }
