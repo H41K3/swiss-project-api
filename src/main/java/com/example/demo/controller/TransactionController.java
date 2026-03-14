@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.model.Transaction;
 import com.example.demo.repository.TransactionRepository;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/transactions")
 public class TransactionController {
@@ -33,7 +35,7 @@ public class TransactionController {
 
     // Endpoint para SALVAR uma nova transação (POST)
     @PostMapping
-    public Transaction createTransaction(@RequestBody Transaction transaction) {
+    public Transaction createTransaction(@Valid @RequestBody Transaction transaction) {
         return repository.save(transaction);
     }
 
@@ -45,7 +47,7 @@ public class TransactionController {
     
     // Endpoint para ATUALIZAR uma transação existente (PUT)
     @PutMapping("/{id}")
-    public Transaction updateTransaction(@PathVariable Long id, @RequestBody Transaction transactionDetails) {
+    public Transaction updateTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transactionDetails) {
         
         // 1. Busca a transação antiga no banco de dados
         Transaction existingTransaction = repository.findById(id)
