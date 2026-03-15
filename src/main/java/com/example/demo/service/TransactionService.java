@@ -1,11 +1,14 @@
 package com.example.demo.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.BalanceResponseDTO;
 import com.example.demo.dto.TransactionRequestDTO;
 import com.example.demo.model.Transaction;
+import com.example.demo.model.TransactionType;
 import com.example.demo.repository.TransactionRepository;
 
 @Service
@@ -21,19 +24,27 @@ public class TransactionService {
         return repository.findAll();
     }
 
+    // Método para buscar por ID e disparar o erro caso não exista
+    public Transaction getTransactionById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transação não encontrada com o ID: " + id));
+    }
+
     public Transaction createTransaction(TransactionRequestDTO dto) {
         Transaction transaction = new Transaction();
         transaction.setDescription(dto.description());
         transaction.setAmount(dto.amount());
         transaction.setTransactionDate(dto.transactionDate());
-        
-        // NOVO: Passando o tipo do DTO para a Entidade
         transaction.setType(dto.type()); 
 
         return repository.save(transaction);
     }
 
     public void deleteTransaction(Long id) {
+        // Verifica se existe antes de deletar para disparar o erro caso não exista
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Não é possível deletar. Transação não encontrada com o ID: " + id);
+        }
         repository.deleteById(id);
     }
 
@@ -44,32 +55,27 @@ public class TransactionService {
         existingTransaction.setDescription(dto.description());
         existingTransaction.setAmount(dto.amount());
         existingTransaction.setTransactionDate(dto.transactionDate());
-        
-        // NOVO: Atualizando o tipo também
         existingTransaction.setType(dto.type()); 
 
         return repository.save(existingTransaction);
     }
 
-    // NOVO MÉTODO: O calculador de saldo
-    public com.example.demo.dto.BalanceResponseDTO getBalanceSummary() {
+    public BalanceResponseDTO getBalanceSummary() {
         List<Transaction> transactions = repository.findAll();
         
-        java.math.BigDecimal totalIncome = java.math.BigDecimal.ZERO;
-        java.math.BigDecimal totalExpense = java.math.BigDecimal.ZERO;
+        BigDecimal totalIncome = BigDecimal.ZERO;
+        BigDecimal totalExpense = BigDecimal.ZERO;
 
-        // O Java vai olhar transação por transação e separar as caixinhas
         for (Transaction t : transactions) {
-            if (t.getType() == com.example.demo.model.TransactionType.INCOME) {
+            if (t.getType() == TransactionType.INCOME) {
                 totalIncome = totalIncome.add(t.getAmount());
-            } else if (t.getType() == com.example.demo.model.TransactionType.EXPENSE) {
+            } else if (t.getType() == TransactionType.EXPENSE) {
                 totalExpense = totalExpense.add(t.getAmount());
             }
         }
 
-        // Saldo = Receitas - Despesas
-        java.math.BigDecimal balance = totalIncome.subtract(totalExpense);
+        BigDecimal balance = totalIncome.subtract(totalExpense);
 
-        return new com.example.demo.dto.BalanceResponseDTO(totalIncome, totalExpense, balance);
+        return new BalanceResponseDTO(totalIncome, totalExpense, balance);
     }
 }
