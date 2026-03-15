@@ -1,27 +1,51 @@
-# SwissPocket API 🇨🇭
+# 🇨🇭 SwissPocket API - Enterprise Finance Backend
 
-A robust RESTful API for personal finance management, designed with a clean 3-tier architecture and containerized for seamless deployment. This project serves as a showcase of enterprise-level backend development practices using Java and Spring Boot.
+[![Java Version](https://img.shields.io/badge/Java-25-orange?style=for-the-badge&logo=openjdk)](https://openjdk.org/projects/jdk/25/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4-brightgreen?style=for-the-badge&logo=springboot)](https://spring.io/projects/spring-boot)
+[![Deployment](https://img.shields.io/badge/Live-Render_Frankfurt-blue?style=for-the-badge&logo=render)](https://swiss-project-api.onrender.com/swagger-ui/index.html)
 
-## 🚀 Technologies Used
-* **Java 25** (Record classes, modern language features)
-* **Spring Boot 3** (Web, Data JPA, Validation)
-* **MySQL** (Relational Database)
-* **Docker** (Containerization)
-* **Mockito & JUnit 5** (Unit Testing)
-* **Swagger/OpenAPI** (API Documentation)
+A high-performance RESTful API for financial transaction management. This project demonstrates a production-ready ecosystem, moving beyond local development into a fully automated cloud-native architecture.
 
-## 🏗️ Architecture
-This application strictly follows the **3-Tier Architecture** pattern (Controller -> Service -> Repository) to ensure separation of concerns, maintainability, and testability. Data is protected at the API boundary using **Data Transfer Objects (DTOs)**.
+## 🚀 Live Environment (Frankfurt, EU-Central)
+The application is live and integrated with a managed PostgreSQL cluster. 
+👉 **[Access Live Swagger Documentation](https://swiss-project-api.onrender.com/swagger-ui/index.html)**
 
-## ⚙️ How to Run (Docker)
+---
 
-To run this application without installing Java locally, ensure you have Docker running.
+## 🏗️ System Architecture
+The project follows a strict **3-Tier Architecture** combined with modern DevOps practices to ensure scalability and reliability.
 
-1. **Build the image:**
+### Key Components:
+* **Separation of Concerns:** Controller, Service, and Repository layers.
+* **Data Integrity:** Validated DTOs for all API boundaries.
+* **Infrastructure as Code:** Multi-stage Docker builds for optimized container footprints.
+* **CI/CD:** Automated test suites and deployment via GitHub Actions (CI) and Render (CD).
+
+---
+
+## 🛠️ Tech Stack & Infrastructure
+| Layer | Technologies |
+| :--- | :--- |
+| **Language** | Java 25 (Modern Records & Pattern Matching) |
+| **Framework** | Spring Boot 3.4 (Web, Data JPA, Validation) |
+| **Database** | PostgreSQL (Managed by Neon.tech) |
+| **Container** | Docker (Multi-stage Build) |
+| **Cloud** | Render (Frankfurt Region - EU Central 1) |
+| **API Docs** | OpenAPI 3 / Swagger UI |
+
+---
+
+## ⚙️ Development & Deployment
+
+### Local Development (Docker)
+To run the environment locally using the production-ready Docker setup:
+```bash
+# Build the multi-stage image
 docker build -t swisspocket-api .
 
-2. **Run the container:**
-docker run -p 8080:8080 -e "SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/swissproject_db?serverTimezone=UTC" swisspocket-api
-
-3. **Access the API Documentation:**
-Open your browser and navigate to: http://localhost:8080/swagger-ui/index.html
+# Run with environment variables
+docker run -p 8080:8080 \
+  -e DATABASE_URL=jdbc:postgresql://your-db-url \
+  -e DATABASE_USER=your-user \
+  -e DATABASE_PASSWORD=your-password \
+  swisspocket-api
