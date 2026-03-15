@@ -1,16 +1,21 @@
-# Estágio 1: Build (O Cozinheiro)
-# Usa uma imagem do Maven para compilar o código
-FROM maven:3.9.9-eclipse-temurin-21 AS build
+# Estágio 1: Build (Compilação)
+FROM eclipse-temurin:25-jdk AS build
 WORKDIR /app
-COPY . .
-# Executa o comando para gerar o .jar, pulando os testes para ser mais rápido
-RUN mvn clean package -DskipTests
 
-# Estágio 2: Run (O Garçom)
-# Usa uma imagem leve do Java para rodar a aplicação
+# Copia os arquivos do projeto
+COPY . .
+
+# Dá permissão para o wrapper e compila o projeto
+RUN chmod +x ./mvnw && ./mvnw clean package -DskipTests
+
+# Estágio 2: Run (Execução)
 FROM eclipse-temurin:25-jdk
 WORKDIR /app
-# Copia o "bolo assado" do Estágio 1 para este estágio final
+
+# Copia o jar gerado no estágio anterior
 COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 8080
+
+# Comando para rodar a aplicação
 ENTRYPOINT ["java", "-jar", "app.jar"]
