@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.BalanceResponseDTO;
 import com.example.demo.dto.TransactionRequestDTO;
 import com.example.demo.model.Transaction;
 import com.example.demo.service.TransactionService;
@@ -21,7 +24,6 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/transactions")
 public class TransactionController {
 
-    // Agora o Controlador fala apenas com o Service, e não mais com o Repository
     private final TransactionService service;
 
     public TransactionController(TransactionService service) {
@@ -29,30 +31,33 @@ public class TransactionController {
     }
 
     @GetMapping
-    public List<Transaction> getAllTransactions() {
-        // O controlador apenas repassa o pedido
-        return service.getAllTransactions();
+    public ResponseEntity<List<Transaction>> getAll() {
+        return ResponseEntity.ok(service.getAllTransactions());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Transaction> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getTransactionById(id));
     }
 
     @PostMapping
-    public Transaction createTransaction(@Valid @RequestBody TransactionRequestDTO dto) {
-        // Toda aquela lógica gigante de criar transação sumiu daqui!
-        return service.createTransaction(dto);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteTransaction(@PathVariable Long id) {
-        service.deleteTransaction(id);
+    public ResponseEntity<Transaction> create(@Valid @RequestBody TransactionRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.createTransaction(dto));
     }
 
     @PutMapping("/{id}")
-    public Transaction updateTransaction(@PathVariable Long id, @Valid @RequestBody TransactionRequestDTO dto) {
-        return service.updateTransaction(id, dto);
+    public ResponseEntity<Transaction> update(@PathVariable Long id, @Valid @RequestBody TransactionRequestDTO dto) {
+        return ResponseEntity.ok(service.updateTransaction(id, dto));
     }
 
-    // NOVA ROTA: Retorna o resumo financeiro
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.deleteTransaction(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/summary")
-    public com.example.demo.dto.BalanceResponseDTO getSummary() {
-        return service.getBalanceSummary();
+    public ResponseEntity<BalanceResponseDTO> getSummary() {
+        return ResponseEntity.ok(service.getBalanceSummary());
     }
 }
