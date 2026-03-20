@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class ResourceExceptionHandler {
 
-    // Captura erros genéricos de lógica (como o "ID não encontrado")
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<StandardError> handleRuntime(RuntimeException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -27,12 +26,10 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(status).body(err);
     }
 
-    // NOVO MÉTODO: Captura especificamente erros de validação (@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<StandardError> handleValidation(MethodArgumentNotValidException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         
-        // Pega apenas a primeira mensagem de erro para manter o JSON limpo
         String errorMessage = e.getBindingResult().getFieldError().getDefaultMessage();
         
         StandardError err = new StandardError(
@@ -44,4 +41,17 @@ public class ResourceExceptionHandler {
         );
         return ResponseEntity.status(status).body(err);
     }
+
+    @ExceptionHandler(jakarta.persistence.EntityNotFoundException.class)
+public ResponseEntity<StandardError> handleNotFound(jakarta.persistence.EntityNotFoundException e, HttpServletRequest request) {
+    HttpStatus status = HttpStatus.NOT_FOUND;
+    StandardError err = new StandardError(
+        Instant.now(),
+        status.value(),
+        "Não encontrado",
+        e.getMessage(),
+        request.getRequestURI()
+    );
+    return ResponseEntity.status(status).body(err);
+}
 }

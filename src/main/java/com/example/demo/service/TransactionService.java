@@ -20,7 +20,6 @@ public class TransactionService {
     }
 
     public List<Transaction> getAllTransactions(User user) {
-        // Agora busca apenas as transações do usuário logado
         return repository.findAllByUser(user);
     }
 
@@ -28,7 +27,6 @@ public class TransactionService {
         Transaction transaction = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transação não encontrada com o ID: " + id));
 
-        // Barreira de Segurança: Impede que um usuário acesse transações de outro
         if (!transaction.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Acesso Negado: Esta transação não pertence a você.");
         }
