@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -7,8 +8,11 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.BalanceResponseDTO;
 import com.example.demo.dto.TransactionRequestDTO;
 import com.example.demo.model.Transaction;
+import com.example.demo.model.TransactionType;
 import com.example.demo.model.User;
 import com.example.demo.repository.TransactionRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class TransactionService {
@@ -24,9 +28,11 @@ public class TransactionService {
     }
 
     public Transaction getTransactionById(Long id, User user) {
+        // Passo 1: Busca no banco. Se não existir, lança 404 via Handler
         Transaction transaction = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transação não encontrada com o ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Transação não encontrada com o ID: " + id));
 
+        // Passo 2: Barreira de Segurança (Isolamento de Dados)
         if (!transaction.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Acesso Negado: Esta transação não pertence a você.");
         }
@@ -40,21 +46,17 @@ public class TransactionService {
         transaction.setAmount(dto.amount());
         transaction.setTransactionDate(dto.transactionDate());
         transaction.setType(dto.type());
-
-        // Vincula o usuário logado como dono da transação
         transaction.setUser(user);
 
         return repository.save(transaction);
     }
 
     public void deleteTransaction(Long id, User user) {
-        // Reutiliza a nossa barreira de segurança para garantir que ele é o dono
         Transaction transaction = getTransactionById(id, user);
         repository.delete(transaction);
     }
 
     public Transaction updateTransaction(Long id, TransactionRequestDTO dto, User user) {
-        // Reutiliza a barreira de segurança
         Transaction existingTransaction = getTransactionById(id, user);
 
         existingTransaction.setDescription(dto.description());
@@ -65,24 +67,23 @@ public class TransactionService {
         return repository.save(existingTransaction);
     }
 
-    // ... outros métodos (getAll, create, delete, etc) ...
     public BalanceResponseDTO getBalanceSummary(User user) {
         List<Transaction> transactions = repository.findAllByUser(user);
 
-        // Soma Entradas
-        java.math.BigDecimal totalIncome = transactions.stream()
-                .filter(t -> t.getType() == com.example.demo.model.TransactionType.INCOME)
+        // Soma Entradas (INCOME)
+        BigDecimal totalIncome = transactions.stream()
+                .filter(t -> t.getType() == TransactionType.INCOME)
                 .map(Transaction::getAmount)
-                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Soma Despesas
-        java.math.BigDecimal totalExpense = transactions.stream()
-                .filter(t -> t.getType() == com.example.demo.model.TransactionType.EXPENSE)
+        // Soma Despesas (EXPENSE)
+        BigDecimal totalExpense = transactions.stream()
+                .filter(t -> t.getType() == TransactionType.EXPENSE)
                 .map(Transaction::getAmount)
-                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Calcula Saldo Líquido
-        java.math.BigDecimal balance = totalIncome.subtract(totalExpense);
+        BigDecimal balance = totalIncome.subtract(totalExpense);
 
         return new BalanceResponseDTO(totalIncome, totalExpense, balance);
     }
