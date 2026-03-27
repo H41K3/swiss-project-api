@@ -14,6 +14,7 @@ import com.example.demo.dto.LoginResponseDTO;
 import com.example.demo.dto.RegisterDTO;
 import com.example.demo.infra.security.TokenService;
 import com.example.demo.model.User;
+import com.example.demo.model.UserRole; // Não esqueça deste import
 import com.example.demo.repository.UserRepository;
 
 import jakarta.validation.Valid;
@@ -47,9 +48,11 @@ public class AuthController {
         // Verifica se o usuário já existe
         if (this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();
 
-        // Criptografa a senha antes de salvar no banco (Obrigatório)
+        // Criptografa a senha
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        User newUser = new User(null, data.login(), encryptedPassword, data.role());
+        
+        // CORREÇÃO AQUI: Forçamos a role padrão UserRole.USER (ou a que você definiu no seu Enum)
+        User newUser = new User(null, data.login(), encryptedPassword, UserRole.USER);
 
         this.repository.save(newUser);
 
