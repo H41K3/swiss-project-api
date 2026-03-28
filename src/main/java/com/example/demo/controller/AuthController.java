@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,6 +27,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -40,7 +42,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO data) {
-        // Agora usamos data.cpf() em vez de login
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.cpf(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
@@ -51,16 +52,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid RegisterDTO data) {
-        // Verifica se o CPF (salvo no login) já existe
         if (this.repository.findByLogin(data.cpf()) != null) {
             return ResponseEntity.badRequest().build();
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
 
-        // Como o construtor antigo não tinha os campos novos, usamos o construtor vazio e os setters
         User newUser = new User();
-        newUser.setLogin(data.cpf()); // Salvamos o CPF na coluna login!
+        newUser.setLogin(data.cpf());
         newUser.setPassword(encryptedPassword);
         newUser.setRole(UserRole.USER);
         newUser.setFullName(data.fullName());
@@ -91,9 +90,6 @@ public class AuthController {
         return ResponseEntity.ok("Senha atualizada com sucesso!");
     }
 
-    // ==========================================
-    // ROTA NOVA: BUSCAR PERFIL DO USUÁRIO
-    // ==========================================
     @GetMapping("/me")
     public ResponseEntity<UserProfileDTO> getUserProfile() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -101,7 +97,6 @@ public class AuthController {
 
         User user = repository.findById(loggedInUser.getId()).orElseThrow();
 
-        // Retornamos tudo, menos a senha e o CPF (para segurança)
         return ResponseEntity.ok(new UserProfileDTO(user.getFullName(), user.getEmail(), user.getPhone()));
     }
 }
