@@ -8,11 +8,13 @@
         <version>4.0.3</version>
         <relativePath/> 
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>demo</artifactId>
+    
+    <!-- Identidade do Projeto Atualizada -->
+    <groupId>com.globalwallet</groupId>
+    <artifactId>globalwallet-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo</name>
-    <description>Demo project for Spring Boot</description>
+    <name>globalwallet-api</name>
+    <description>API REST para o controle financeiro GlobalWallet</description>
     
     <properties>
         <java.version>25</java.version>
