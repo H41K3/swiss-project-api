@@ -3,6 +3,7 @@ package com.globalwallet.api.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -41,32 +42,83 @@ public class Transaction {
     @JoinColumn(name = "card_id")
     private Card card;
 
+    @Column(name = "payment_method")
+    private String paymentMethod;
+
     public Transaction() {
     }
 
     // --- GETTERS E SETTERS ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public BigDecimal getAmount() { return amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public String getDescription() {
+        return description;
+    }
 
-    public LocalDate getTransactionDate() { return transactionDate; }
-    public void setTransactionDate(LocalDate transactionDate) { this.transactionDate = transactionDate; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public TransactionType getType() { return type; }
-    public void setType(TransactionType type) { this.type = type; }
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-    public TransactionCategory getCategory() { return category; }
-    public void setCategory(TransactionCategory category) { this.category = category; }
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public LocalDate getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(LocalDate transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
+    public TransactionType getType() {
+        return type;
+    }
+
+    public void setType(TransactionType type) {
+        this.type = type;
+    }
+
+    public TransactionCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(TransactionCategory category) {
+        this.category = category;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     // --- NOVO: Getters e Setters do Cartão ---
-    public Card getCard() { return card; }
-    public void setCard(Card card) { this.card = card; }
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 }

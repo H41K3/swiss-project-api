@@ -51,9 +51,13 @@ public class TransactionService {
         transaction.setTransactionDate(dto.transactionDate());
         transaction.setType(dto.type());
         transaction.setCategory(dto.category()); 
+        
+        // 👇 SALVANDO O NOVO CAMPO: PIX, ACCOUNT ou CARD
+        transaction.setPaymentMethod(dto.paymentMethod()); 
+        
         transaction.setUser(user);
 
-        // --- NOVO: Lógica de Cartão ---
+        // --- Lógica de Cartão ---
         if (dto.cardId() != null) {
             Card card = cardRepository.findByIdAndUser(dto.cardId(), user)
                     .orElseThrow(() -> new RuntimeException("Cartão não encontrado."));
@@ -73,7 +77,7 @@ public class TransactionService {
     public void deleteTransaction(Long id, User user) {
         Transaction transaction = getTransactionById(id, user);
 
-        // --- NOVO: Se apagar uma transação de cartão, devolve o limite ---
+        // --- Se apagar uma transação de cartão, devolve o limite ---
         if (transaction.getCard() != null && transaction.getType() == TransactionType.EXPENSE) {
             Card card = transaction.getCard();
             card.setCurrentInvoice(card.getCurrentInvoice() - transaction.getAmount().doubleValue());
@@ -87,7 +91,7 @@ public class TransactionService {
     public Transaction updateTransaction(Long id, TransactionRequestDTO dto, User user) {
         Transaction existingTransaction = getTransactionById(id, user);
 
-        // --- NOVO: Desfaz a transação antiga no cartão antes de aplicar a nova ---
+        // --- Desfaz a transação antiga no cartão antes de aplicar a nova ---
         if (existingTransaction.getCard() != null && existingTransaction.getType() == TransactionType.EXPENSE) {
             Card oldCard = existingTransaction.getCard();
             oldCard.setCurrentInvoice(oldCard.getCurrentInvoice() - existingTransaction.getAmount().doubleValue());
@@ -99,8 +103,11 @@ public class TransactionService {
         existingTransaction.setTransactionDate(dto.transactionDate());
         existingTransaction.setType(dto.type());
         existingTransaction.setCategory(dto.category());
+        
+        // 👇 ATUALIZANDO O NOVO CAMPO: PIX, ACCOUNT ou CARD
+        existingTransaction.setPaymentMethod(dto.paymentMethod());
 
-        // --- NOVO: Aplica a nova configuração de cartão ---
+        // --- Aplica a nova configuração de cartão ---
         if (dto.cardId() != null) {
             Card newCard = cardRepository.findByIdAndUser(dto.cardId(), user)
                     .orElseThrow(() -> new RuntimeException("Cartão não encontrado."));
@@ -120,7 +127,7 @@ public class TransactionService {
     public BalanceResponseDTO getBalanceSummary(User user) {
         List<Transaction> transactions = repository.findAllByUser(user);
 
-        // --- NOVO: t.getCard() == null garante que compras no cartão NÃO descontem do Saldo Geral ---
+        // --- t.getCard() == null garante que compras no cartão NÃO descontem do Saldo Geral ---
         BigDecimal totalIncome = transactions.stream()
                 .filter(t -> t.getType() == TransactionType.INCOME && t.getCard() == null)
                 .map(Transaction::getAmount)
