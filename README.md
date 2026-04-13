@@ -1,55 +1,39 @@
-# 🌐 GlobalWallet Web - Frontend Application
+# 🌐 GlobalWallet API - Enterprise Finance Backend
 
-[![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Axios](https://img.shields.io/badge/axios-671ddf?&style=for-the-badge&logo=axios&logoColor=white)](https://axios-http.com/)
+[![Java Version](https://img.shields.io/badge/Java-25-orange?style=for-the-badge&logo=openjdk)](https://openjdk.org/projects/jdk/25/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4-brightgreen?style=for-the-badge&logo=springboot)](https://spring.io/projects/spring-boot)
+[![Security](https://img.shields.io/badge/Security-JWT_Auth-red?style=for-the-badge&logo=jsonwebtokens)](https://jwt.io/)
+[![Deployment](https://img.shields.io/badge/Live-Render_Cloud-blue?style=for-the-badge&logo=render)](https://globalwallet-api-9ffu.onrender.com/swagger-ui/index.html)
 
-A modern, responsive, and high-performance web interface for the GlobalWallet financial ecosystem. Built to provide a seamless user experience for managing personal finances, tracking transactions, and interacting securely with the backend API.
+A high-performance RESTful API for financial transaction management. This project demonstrates a production-ready ecosystem with a focus on security, privacy, and cloud-native architecture.
 
 ## 🌍 Live Environment
 
-The frontend is deployed and accessible at the official domain:
-👉 **[https://www.globalwallet.app.br](https://www.globalwallet.app.br)**
+The application is live and integrated with a managed PostgreSQL cluster on Supabase.
+👉 **[Access Live Swagger Documentation](https://globalwallet-api-9ffu.onrender.com/swagger-ui/index.html)**
 
 ---
 
-## 🚀 Core Technologies
+## 🚀 Core Architecture & Technologies
 
-* **UI Library:** React (Functional Components & Hooks)
-* **Build Tool:** Vite (for lightning-fast HMR and optimized production builds)
-* **Language:** TypeScript (for strict typing and robust architecture)
-* **HTTP Client:** Axios (for seamless communication with the Spring Boot REST API)
+* **Language:** Java 25 LTS
+* **Framework:** Spring Boot 3.4
+* **Database:** PostgreSQL (Hosted on Supabase)
+* **Authentication:** Spring Security with Stateless JWT
+* **Connection Pooling:** HikariCP (Optimized for cloud limits)
 
-## 🛠️ Local Setup & Development
+## 🛠️ Local Setup
 
-To run this project locally, ensure you have **Node.js** (v18+ recommended) and **npm** installed.
+To run this project locally, ensure you have JDK 25 installed and set up the following environment variables:
 
-**1. Clone the repository:**
+* `DATABASE_URL` -> Supabase JDBC URL
+* `DATABASE_USER` -> Database username
+* `DATABASE_PASSWORD` -> Database password
+* `JWT_SECRET` -> Your secret key for token generation
+* `PORT` -> 8080
 
-```bash
-git clone [https://github.com/H41K3/globalwallet-web.git](https://github.com/H41K3/globalwallet-web.git)
-cd globalwallet-web
-```
-
-**2. Install dependencies:**
-
-```bash
-npm install
-```
-
-**3. Configure Environment Variables:**
-Create a `.env` file in the root directory to point to your local or production API. By default, it connects to the local backend:
-
-```env
-VITE_API_URL=http://localhost:8080
-# For production testing, use: [https://globalwallet-api-9ffu.onrender.com](https://globalwallet-api-9ffu.onrender.com)
-```
-
-**4. Start the development server:**
+Clone the repository and run:
 
 ```bash
-npm run dev
+./mvnw spring-boot:run
 ```
-
-The application will be available at `http://localhost:5173`.
