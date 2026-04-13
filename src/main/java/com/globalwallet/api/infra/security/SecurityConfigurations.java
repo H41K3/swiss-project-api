@@ -60,12 +60,13 @@ public class SecurityConfigurations {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // CORREÇÃO AQUI: Permite qualquer origem (incluindo o IP da sua rede local no celular)
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        // Libera EXATAMENTE o Localhost e o Domínio Oficial
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:5173",
+            "https://www.globalwallet.app.br"
+        ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // É comum o CORS bloquear se não liberarmos todos os cabeçalhos
         configuration.setAllowedHeaders(Arrays.asList("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
