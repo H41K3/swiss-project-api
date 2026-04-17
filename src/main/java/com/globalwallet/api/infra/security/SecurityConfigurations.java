@@ -60,10 +60,9 @@ public class SecurityConfigurations {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Libera EXATAMENTE o Localhost e o Domínio Oficial
         configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:5173",
-            "https://www.globalwallet.app.br"
+                "http://localhost:5173",
+                "https://www.globalwallet.app.br"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
